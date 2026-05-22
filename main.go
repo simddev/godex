@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/simddev/godex/internal/pokeapi"
 	"github.com/simddev/godex/internal/pokecache"
 )
 
@@ -13,6 +14,7 @@ type config struct {
 	nextURL *string
 	prevURL *string
 	cache   *pokecache.Cache
+	pokedex map[string]pokeapi.Pokemon
 }
 
 type cliCommand struct {
@@ -48,6 +50,11 @@ func getCommands() map[string]cliCommand {
 			description: "List Pokemon in a location area",
 			callback:    commandExplore,
 		},
+		"catch": {
+			name:        "catch",
+			description: "Attempt to catch a Pokemon",
+			callback:    commandCatch,
+		},
 	}
 }
 
@@ -70,7 +77,10 @@ func commandExit(cfg *config, args []string) error {
 
 func main() {
 	cmds := getCommands()
-	cfg := &config{cache: pokecache.NewCache(5 * time.Minute)}
+	cfg := &config{
+		cache:   pokecache.NewCache(5 * time.Minute),
+		pokedex: make(map[string]pokeapi.Pokemon),
+	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")

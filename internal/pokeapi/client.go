@@ -10,6 +10,50 @@ import (
 
 const baseURL = "https://pokeapi.co/api/v2"
 
+type Pokemon struct {
+	Name           string `json:"name"`
+	BaseExperience int    `json:"base_experience"`
+	Height         int    `json:"height"`
+	Weight         int    `json:"weight"`
+	Stats          []struct {
+		BaseStat int `json:"base_stat"`
+		Stat     struct {
+			Name string `json:"name"`
+		} `json:"stat"`
+	} `json:"stats"`
+	Types []struct {
+		Type struct {
+			Name string `json:"name"`
+		} `json:"type"`
+	} `json:"types"`
+}
+
+func GetPokemon(name string, cache *pokecache.Cache) (Pokemon, error) {
+	url := baseURL + "/pokemon/" + name
+	if data, ok := cache.Get(url); ok {
+		var p Pokemon
+		if err := json.Unmarshal(data, &p); err != nil {
+			return Pokemon{}, err
+		}
+		return p, nil
+	}
+	resp, err := http.Get(url)
+	if err != nil {
+		return Pokemon{}, err
+	}
+	defer resp.Body.Close()
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return Pokemon{}, err
+	}
+	cache.Add(url, data)
+	var p Pokemon
+	if err := json.Unmarshal(data, &p); err != nil {
+		return Pokemon{}, err
+	}
+	return p, nil
+}
+
 type LocationAreaDetail struct {
 	PokemonEncounters []struct {
 		Pokemon struct {
