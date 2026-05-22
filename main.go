@@ -6,10 +6,15 @@ import (
 	"os"
 )
 
+type config struct {
+	nextURL *string
+	prevURL *string
+}
+
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -24,10 +29,20 @@ func getCommands() map[string]cliCommand {
 			description: "Exit the Pokedex",
 			callback:    commandExit,
 		},
+		"map": {
+			name:        "map",
+			description: "Display the next 20 location areas",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Display the previous 20 location areas",
+			callback:    commandMapb,
+		},
 	}
 }
 
-func commandHelp() error {
+func commandHelp(cfg *config) error {
 	cmds := getCommands()
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
@@ -38,7 +53,7 @@ func commandHelp() error {
 	return nil
 }
 
-func commandExit() error {
+func commandExit(cfg *config) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
@@ -46,6 +61,7 @@ func commandExit() error {
 
 func main() {
 	cmds := getCommands()
+	cfg := &config{}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -61,7 +77,7 @@ func main() {
 			fmt.Println("Unknown command")
 			continue
 		}
-		if err := cmd.callback(); err != nil {
+		if err := cmd.callback(cfg); err != nil {
 			fmt.Println(err)
 		}
 	}
