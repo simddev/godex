@@ -22,6 +22,7 @@ func commandCatch(cfg *config, args []string) error {
 	// common Pokemon (~50 XP) are easy and legendaries (~300 XP) are hard.
 	if rand.Intn(pokemon.BaseExperience) < 40 {
 		fmt.Printf("%s was caught!\n", name)
+		fmt.Println("You may now inspect it with the inspect command.")
 		cfg.pokedex[name] = pokemon
 	} else {
 		fmt.Printf("%s escaped!\n", name)
