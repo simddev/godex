@@ -4,11 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
+
+	"github.com/simddev/godex/internal/pokecache"
 )
 
 type config struct {
 	nextURL *string
 	prevURL *string
+	cache   *pokecache.Cache
 }
 
 type cliCommand struct {
@@ -61,7 +65,7 @@ func commandExit(cfg *config) error {
 
 func main() {
 	cmds := getCommands()
-	cfg := &config{}
+	cfg := &config{cache: pokecache.NewCache(5 * time.Minute)}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")

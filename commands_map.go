@@ -11,7 +11,7 @@ func commandMap(cfg *config) error {
 	if cfg.nextURL != nil {
 		url = *cfg.nextURL
 	}
-	resp, err := pokeapi.GetLocationAreas(url)
+	resp, err := pokeapi.GetLocationAreas(url, cfg.cache)
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func commandMapb(cfg *config) error {
 		fmt.Println("you're on the first page")
 		return nil
 	}
-	resp, err := pokeapi.GetLocationAreas(*cfg.prevURL)
+	resp, err := pokeapi.GetLocationAreas(*cfg.prevURL, cfg.cache)
 	if err != nil {
 		return err
 	}

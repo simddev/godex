@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"github.com/simddev/godex/internal/pokecache"
 )
 
 const baseURL = "https://pokeapi.co/api/v2"
@@ -18,10 +20,19 @@ type LocationAreaResponse struct {
 	} `json:"results"`
 }
 
-func GetLocationAreas(url string) (LocationAreaResponse, error) {
+func GetLocationAreas(url string, cache *pokecache.Cache) (LocationAreaResponse, error) {
 	if url == "" {
 		url = baseURL + "/location-area/"
 	}
+
+	if data, ok := cache.Get(url); ok {
+		var result LocationAreaResponse
+		if err := json.Unmarshal(data, &result); err != nil {
+			return LocationAreaResponse{}, err
+		}
+		return result, nil
+	}
+
 	resp, err := http.Get(url)
 	if err != nil {
 		return LocationAreaResponse{}, err
@@ -32,6 +43,8 @@ func GetLocationAreas(url string) (LocationAreaResponse, error) {
 	if err != nil {
 		return LocationAreaResponse{}, err
 	}
+
+	cache.Add(url, data)
 
 	var result LocationAreaResponse
 	if err := json.Unmarshal(data, &result); err != nil {
