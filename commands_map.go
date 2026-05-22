@@ -6,7 +6,7 @@ import (
 	"github.com/simddev/godex/internal/pokeapi"
 )
 
-func commandMap(cfg *config) error {
+func commandMap(cfg *config, args []string) error {
 	url := ""
 	if cfg.nextURL != nil {
 		url = *cfg.nextURL
@@ -23,7 +23,7 @@ func commandMap(cfg *config) error {
 	return nil
 }
 
-func commandMapb(cfg *config) error {
+func commandMapb(cfg *config, args []string) error {
 	if cfg.prevURL == nil {
 		fmt.Println("you're on the first page")
 		return nil
