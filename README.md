@@ -1,4 +1,4 @@
-# Godex
+# Pokedex written in Go
 
 A Pokedex CLI built in Go. Explore the Pokemon world, catch Pokemon, and build your collection.
 
